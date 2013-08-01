@@ -9,8 +9,8 @@
 	margin:1px;
 }*/
 .chart rect{
-	fill:rgb(0,50,150);
-	stroke:white;
+/*	fill:rgb(0,50,150);
+*/	stroke:white;
 }
 
 .chart text{

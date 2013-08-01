@@ -18,7 +18,7 @@ var vis = d3.select("body")
 var x = d3.scale.linear().domain([0,1]).range([screen.width / 2 - 400,screen.width / 2 + 400]),
 y = d3.scale.linear().domain([0,1]).range([0,h]),
 r = d3.scale.linear().domain([0,1]).range([5,10]),
-c = d3.scale.linear().domain([minG,maxG]).range(["hsl(250, 50%, 50%)", "hsl(350, 100%, 50%)"]).interpolate(d3.interpolateHsl)
+c = d3.scale.linear().domain([0,1]).range(["hsl(250, 50%, 50%)", "hsl(350, 100%, 50%)"]).interpolate(d3.interpolateHsl)
  
 vis.selectAll("circle")
     .data(data)
