@@ -1,0 +1,25 @@
+.chart {border:1px solid gray;}
+/*.chart div 
+{
+	background-color: rgb(100,50,150);
+	color:#fff;
+	text-align: right;
+	font:10px sans-serif;
+	padding:3px;
+	margin:1px;
+}*/
+.chart rect{
+	fill:rgb(0,50,150);
+	stroke:white;
+}
+
+.chart text{
+	font:10px sans-serif;
+}
+
+.chart .bar-label{
+	fill:white;
+}
+.chart line{
+	stroke:#ccc;
+}
