@@ -20,13 +20,14 @@ allData=eval(f.read())
 g.write("\n//In case we want to get students' answers.\n")
 g.write("var dataset1Temp = [")
 #Make sure that all dicts in data1 haveimestamp,username and grade and it has time data in it
-data1=filter(lambda x:  x.has_key("timestamp") and x['timestamp'].find('2013-04-22')>-1 and x.has_key("question1") and x.has_key("grade") and isinstance(x["grade"],int)  ,allData["Quiz 21"])
+data1=filter(lambda x:  x.has_key("timestamp") and x['timestamp'].find('2013')>-1 and x.has_key("question1") and x.has_key("grade") and isinstance(x["grade"],int)  ,allData["Quiz 21"])
 
 #Create timespent attributes for each user in second
+startingT=3000;
 def getTimespent(d):
-	return float(d["timestamp"][15])*60 + float(d["timestamp"][17:19])
-M = getTimespent(max(data1,key=lambda d: d["timestamp"]))+1
-m = getTimespent(min(data1,key=lambda d: d["timestamp"]))
+	return float(d["timestamp"][14])*600+float(d["timestamp"][15])*60 + float(d["timestamp"][17:19])-startingT
+M = getTimespent(max(data1,key=lambda d: getTimespent(d)))+1
+m = getTimespent(min(data1,key=lambda d: getTimespent(d)))
 
 # we separate into numTps groups, classified by grade from minG to maxG
 def getTimeperiod(t):

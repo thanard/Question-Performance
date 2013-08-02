@@ -122,12 +122,11 @@ chart.selectAll(".small-colored-rect").data(d3.range(maxG-minG+1))
 	.attr("ry",3)
 	.attr("fill",function(d){return c(d);});
 
-function goGrouped(){
+function unstack_bar(){
 	rects.transition()
-		.duration(3000)
-		.delay(function(d,i){return i*20})
+		.duration(1000)
+		.delay(function(d,i){return i*10})
 		.attr("x",function(d,i,j){
-			console.log(i,j);
 			return x_scale(i)+x_scale.rangeBand()/stacked_data.length*j;
 		})
 		.attr("width",x_scale.rangeBand()/stacked_data.length)
@@ -135,4 +134,19 @@ function goGrouped(){
 		.attr("y",function(d){
 			return   chart_height-y_scale(d.y);
 		});
+}
+
+function stack_bar(){
+	rects.transition()
+	.duration(1000)
+	.delay(function(d,i){return i*10;})
+		.attr("y",function(d){
+			console.log(chart_height-y_scale(d.y+d.y0))
+			return   chart_height-y_scale(d.y+d.y0);
+		})
+		.transition()
+		.attr("x",function(d,i){
+			return x_scale(i);
+		})
+		.attr("width",x_scale.rangeBand());
 }
