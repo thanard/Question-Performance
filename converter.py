@@ -1,4 +1,9 @@
 import math
+#Create timespent attributes for each user in second
+startingT=0;
+def getTimespent(d):
+	return float(d["timestamp"][14])*600+float(d["timestamp"][15])*60 + float(d["timestamp"][17:19])-startingT
+
 #number of timeperiods
 numTps=7
 # max grade
@@ -17,15 +22,19 @@ g.write("var minG = "+str(minG)+";\n")
 #parse string to allData object
 allData=eval(f.read())
 
-g.write("\n//In case we want to get students' answers.\n")
-g.write("var dataset1Temp = [")
 #Make sure that all dicts in data1 haveimestamp,username and grade and it has time data in it
-data1=filter(lambda x:  x.has_key("timestamp") and x['timestamp'].find('2013')>-1 and x.has_key("question1") and x.has_key("grade") and isinstance(x["grade"],int)  ,allData["Quiz 21"])
+data1=filter(lambda x:  x.has_key("timestamp") and x['timestamp'].find('2013')>-1 and x.has_key("question1") and x.has_key("grade") and isinstance(x["grade"],int)  ,allData["Quiz 22"])
 
-#Create timespent attributes for each user in second
-startingT=3000;
-def getTimespent(d):
-	return float(d["timestamp"][14])*600+float(d["timestamp"][15])*60 + float(d["timestamp"][17:19])-startingT
+# Time average 
+g.write("var timeAverage = "+str(sum([getTimespent(i) for i in data1])/len(data1))+"\n")
+
+# Grade average 
+g.write("var gradeAverage = "+str(sum([d['grade'] for d in data1])*1.0/len(data1))+"\n")
+
+g.write("\n//In case we want to get students' answers.\n")
+
+g.write("var dataset1Temp = [")
+
 M = getTimespent(max(data1,key=lambda d: getTimespent(d)))+1
 m = getTimespent(min(data1,key=lambda d: getTimespent(d)))
 
@@ -62,9 +71,9 @@ for j in xrange(numG):
 	g.write(str(tempL))
 	if j!=numG-1:
 		g.write(",\n")
-g.write("]\n")
+g.write("]\n\n")
 
-g.write("var xLabels = "+str([{"starting":math.ceil(m+(x*(M-m))/numTps),"ending":math.ceil(m+((x+1)*(M-m))/numTps)-1} for x in xrange(numTps)]))
+g.write("var xLabels = "+str([{"starting":math.ceil(m+(x*(M-m))/numTps),"ending":math.ceil(m+((x+1)*(M-m))/numTps)-1} for x in xrange(numTps)])+"\n\n")
 
 f.close()
 g.close()

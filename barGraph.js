@@ -122,6 +122,28 @@ chart.selectAll(".small-colored-rect").data(d3.range(maxG-minG+1))
 	.attr("ry",3)
 	.attr("fill",function(d){return c(d);});
 
+//Time average
+chart.selectAll(".timeAverage").data(['Time Average = '+parseInt(timeAverage*100)/100.0])
+	.enter().append("svg:text")
+	.attr("class","x-name-label")
+	.attr("x",chart_width+margin.right/8)
+	.attr("y",25*(maxG-minG+2)+margin.top/8)
+	.attr("dx",0)
+	.attr("dy",0)
+	.attr("text-anchor","start")
+	.text(String);
+
+//Time average
+chart.selectAll(".gradeAverage").data(['Grade Average = '+parseInt(gradeAverage*100)/100.0])
+	.enter().append("svg:text")
+	.attr("class","x-name-label")
+	.attr("x",chart_width+margin.right/8)
+	.attr("y",25*(maxG-minG+3)+margin.top/8)
+	.attr("dx",0)
+	.attr("dy",0)
+	.attr("text-anchor","start")
+	.text(String);
+
 function unstack_bar(){
 	rects.transition()
 		.duration(1000)
