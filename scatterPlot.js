@@ -12,15 +12,14 @@
 */
 
 var scatterPlot = (function(){
-	var quizNum =1;
-	var numTps = 7;
-	var maxG = 10;
-	var minG = 5;
+	var quizNum =1;//quiz number
+	var numTps = 5;//number of time periods to see
+	var maxG = 10;//maximum grade to see
+	var minG = 5;//minimum grade to see
+	var scaleYAxis=10;//approximately the number of lines on scatter plot
 	var maxT,minT;
 	var numRows = numTps,
 	    numCols = maxG-minG+1,
-	    showingScatter = true,
-	    //scatterDirty = false,
 	    data = null,//for scatterplot
 	    cells = null,//for heatchart
 	    color = d3.interpolateRgb("#fff", "#085e11");
@@ -42,15 +41,6 @@ var scatterPlot = (function(){
 	        }
 	    }
 	    return emptyCells;
-	};
-
-	/*helper function for setupData*/
-	var clearCells = function() {
-	    for (var rowNum = 0; rowNum < numRows; rowNum++) {
-	        for (var colNum = 0; colNum < numCols; colNum++) {
-	            cells[rowNum][colNum].points = [];
-	        }
-	    }
 	};
 
 	/*helper function for setupData*/
@@ -83,12 +73,7 @@ var scatterPlot = (function(){
 
 	    data = [];
 
-	    if (cells === null) {
-	        cells = getEmptyCells();
-	    }
-	    else {
-	        clearCells();
-	    }
+        cells = getEmptyCells();
 
 	    for (var i = 0; i < dataAll[quizNum].length; i++) {
 	        x = dataAll[quizNum][i].grade;
@@ -181,7 +166,7 @@ var scatterPlot = (function(){
 		var x_scale = d3.scale.ordinal().domain(d3.range(minG-1,maxG+1)).rangeBands([0,plot_width])
 		var y_scale = d3.scale.linear().domain([maxT,minT]).range([0,plot_height])
 console.log(JSON.stringify(y_scale.ticks(numTps)),minT,maxT)
-		scatterplot.selectAll(".y-scale-label").data(y_scale.ticks(numTps))
+		scatterplot.selectAll(".y-scale-label").data(y_scale.ticks(scaleYAxis))
 			.enter().append("svg:text")
 			.attr("class","y-scale-label")
 			.attr("x",0)
@@ -199,8 +184,8 @@ console.log(JSON.stringify(y_scale.ticks(numTps)),minT,maxT)
 			.attr("dx",margin.left)
 			.attr("dy",margin.bottom/2)
 			.attr("text-anchor","middle")
-			.text(function(d){return "grade "+d;});
-		scatterplot.selectAll("line").data(y_scale.ticks(numTps))
+			.text(function(d){return d;});
+		scatterplot.selectAll("line").data(y_scale.ticks(scaleYAxis))
 			.enter().append("svg:line")
 			.attr("x1",0)
 			.attr("x2",plot_width)
@@ -224,30 +209,29 @@ console.log(JSON.stringify(y_scale.ticks(numTps)),minT,maxT)
 	var onCellOver = function(cell, data) {
 	    selectCell(cell);
 
-	    if (showingScatter) {
-	        var pointEls = [];
+        var pointEls = [];
 
-	        for (var i = 0; i < data.points.length; i++) {
-	            pointEls.push(d3.select(".scatterplot").select('[ind="' + data.points[i].ind + '"]').node());
-	        }
+        for (var i = 0; i < data.points.length; i++) {
+            pointEls.push(d3.select(".scatterplot").select('[ind="' + data.points[i].ind + '"]').node());
+        }
 
-	        selectPoints(pointEls);
-	    }
+        selectPoints(pointEls);
+    
 	};
 
 	/*helper function for createHeatchart*/
 	var onCellOut = function(cell, data) {
 	    deselectCell(cell);
 
-	    if (showingScatter) {
-	        var pointEls = [];
+    
+        var pointEls = [];
 
-	        for (var i = 0; i < data.points.length; i++) {
-	            pointEls.push(d3.select(".scatterplot").select('[ind="' + data.points[i].ind + '"]').node());
-	        }
+        for (var i = 0; i < data.points.length; i++) {
+            pointEls.push(d3.select(".scatterplot").select('[ind="' + data.points[i].ind + '"]').node());
+        }
 
-	        deselectPoints(pointEls);
-	    }
+        deselectPoints(pointEls);
+    
 	};
 
 	var createHeatchart = function() {
@@ -320,130 +304,14 @@ console.log(JSON.stringify(y_scale.ticks(numTps)),minT,maxT)
 
 //=============================================================================================================================================================================================================================================================
 
-	var addInputs = function(){
-
-	}
-
-	var updateScatterplot = function() {
-	    // select
-	    var dots = d3.select("div.container svg .scatterplot").selectAll("circle").data(data);
-
-	    // enter
-	    dots.enter().append("svg:circle").attr("cx", function(d, i) {
-	        return d.x;
-	    }).attr("cy", function(d, i) {
-	        return d.y;
-	    }).attr("r", 2).attr("ind", function(d) {
-	        return d.ind;
-	    }).on("mouseover", function(d) {
-	        onPointOver(this, d);
-	    }).on("mouseout", function(d) {
-	        onPointOut(this, d);
-	    });
-
-	    // update
-	    dots.attr("cx", function(d, i) {
-	        return d.x;
-	    }).attr("cy", function(d, i) {
-	        return d.y;
-	    }).attr("ind", function(d) {
-	        return d.ind;
-	    }).on("mouseover", function(d) {
-	        onPointOver(this, d);
-	    }).on("mouseout", function(d) {
-	        onPointOut(this, d);
-	    });
-
-	    // exit
-	    dots.exit().remove();
-	};
-
-
-	var updateHeatchart = function() {
-	    var min = 999;
-	    var max = -999;
-	    var l;
-
-	    for (var rowNum = 0; rowNum < cells.length; rowNum++) {
-	        for (var colNum = 0; colNum < numCols; colNum++) {
-	            l = cells[rowNum][colNum].points.length;
-
-	            if (l > max) {
-	                max = l;
-	            }
-	            if (l < min) {
-	                min = l;
-	            }
-	        }
-	    }
-
-	    d3.select("div#heatchart").select("svg").selectAll("g").data(cells).selectAll("rect").data(function(d) {
-	        return d;
-	    }).attr("x", function(d, i) {
-	        return d.col * (size / numCols);
-	    }).attr("y", function(d, i) {
-	        return d.row * (size / numRows);
-	    }).attr("fill", function(d, i) {
-	        return color((d.points.length - min) / (max - min));
-	    }).attr("cell", function(d) {
-	        return "r" + d.row + "c" + d.col;
-	    }).on("mouseover", function(d) {
-	        onCellOver(this, d);
-	    }).on("mouseout", function(d) {
-	        onCellOut(this, d);
-	    });
-	};
-
-	var onRandomizeClick = function() {
-	    randomizeData();
-
-	    if (showingScatter) {
-	        updateScatterplot();
-	    }
-	    else {
-	        scatterDirty = true;
-	    }
-
-	    updateHeatchart();
-	};
-
-	var onNumPointsChange = function(event) {
-	    numPoints = event.target.options[event.target.selectedIndex].value;
-	    randomizeData();
-
-	    if (showingScatter) {
-	        updateScatterplot();
-	    }
-	    else {
-	        scatterDirty = true;
-	    }
-
-	    updateHeatchart();
-	};
-
-	var onShowScatterplotChange = function(event) {
-	    showingScatter = event.target.checked;
-
-	    if (showingScatter) {
-	        if (scatterDirty) {
-	            updateScatterplot();
-	            scatterDirty = false;
-	        }
-
-	        d3.select("div#scatterplot").select("svg").attr("visibility", "visible");
-	    }
-	    else {
-	        d3.select("div#scatterplot").select("svg").attr("visibility", "hidden");
-	    }
-	};
-
-//=============================================================================================================================================================================================================================================================
-
 	var removeSVG = function(){
 		$('.plot1').html('');
 		$('.plot2').html('');
 	}
 	var displayQuiznum = function(){
+		$('#maxGrade').val(maxG)
+		$('#minGrade').val(minG)
+		$('#numTps').val(numTps)
 		div=$('.navbar')
 		if($('.a').length==0){
 			div.append(
@@ -489,6 +357,17 @@ console.log(JSON.stringify(y_scale.ticks(numTps)),minT,maxT)
 		$('.quiz2'+quizNum).attr('class','disabled');
 	}
 	var setupOnclick = function(){
+		$('#plot').click(function(){
+
+			maxG=parseInt($('#maxGrade').val())
+			minG=parseInt($('#minGrade').val())
+			numTps=parseInt($('#numTps').val())
+			numRows = numTps
+		    numCols = maxG-minG+1
+			setupData();
+			removeSVG();
+			viewSVG();
+		})
 		$('div.btn-group ul.dropdown-menu li a').click(function (e) {
 			var quiz=$(this).text();
 			quizNum=parseInt(quiz[5]);
@@ -508,7 +387,6 @@ console.log(JSON.stringify(y_scale.ticks(numTps)),minT,maxT)
 	var viewSVG = function(){
 		createScatterplot();
 		createHeatchart();
-		addInputs();
 	}
 
 //=============================================================================================================================================================================================================================================================

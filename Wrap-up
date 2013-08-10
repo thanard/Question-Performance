@@ -1,0 +1,13 @@
+Objective
+	- help instructor understand performance of students on questions.
+	Ex. 
+	1) If most students spend little time on a question and get good grades, that means the question might be easy.
+	2) If most students spend little time on a question and get it wrong, that means the question might be tricky.
+	3) If most students spend a lot of time on a question and get good grades, that means the problem might need some time to think about it.
+	4) If most students spend a lot of time on a question and get bad grades, that means the problem might be hard or confusing to the students.
+
+System Description
+	- There are two different interfaces (barGraph.html(old) and scatterPlot.html(new))
+	1) First interface is a bar graph, which we use 'converter.py' that convert data from 6.813 spring 2013 in allDatasets.json to dataset1.js file.
+
+	2) Second interface has a scatterplot and a heatchart. We use 'converter2.py' to convert data from 6.813 spring 2013 in allDatasets.json to dataAll.js file.
